@@ -47,3 +47,11 @@ warm schedulers - throw in a database entry for a job in the
 ## Developer-maintained Build Definitions
 The hoss scheduler can be configured with a whitelist of repos to build
 on an ad-hoc basis, trusting build configuration committed in the repo.
+
+## Configuration
+Directives are:
+
+* address - the address to bind to and (if configured) advertise in etcd.
+  defaults to 0.0.0.0:0
+* etcd - the etcd address to publish address info to and use for leader
+  election
