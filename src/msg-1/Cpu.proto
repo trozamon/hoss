@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+import "ResourceAmount.proto";
+
+message Cpu {
+  optional ResourceAmount threads = 1;
+}

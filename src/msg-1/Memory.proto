@@ -1,0 +1,7 @@
+syntax = "proto2";
+
+import "ResourceAmount.proto";
+
+message Memory {
+  optional ResourceAmount megabytes = 1;
+}

@@ -1,0 +1,6 @@
+syntax = "proto2";
+
+message ResourceAmount {
+  optional int64 used = 1;
+  optional int64 total = 2;
+}
