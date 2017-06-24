@@ -7,8 +7,12 @@ project(hoss
 set(CMAKE_CXX_FLAGS "-Wall -Wextra ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(Boost REQUIRED COMPONENTS filesystem system)
-find_package(Protobuf REQUIRED)
+find_package(Boost REQUIRED COMPONENTS
+        filesystem
+        program_options
+        system
+        )
 
+find_package(Protobuf REQUIRED)
 
 add_subdirectory(src)
