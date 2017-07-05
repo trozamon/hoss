@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost REQUIRED COMPONENTS
         filesystem
+        log
         program_options
         system
         )
