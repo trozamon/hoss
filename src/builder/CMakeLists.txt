@@ -4,7 +4,7 @@ add_library(hoss-builder SHARED
 
 target_link_libraries(hoss-builder
         hoss-core
-        hoss-msg-1
+        hoss-msg1
         )
 
 add_executable(hoss-builderd hoss-builderd.cpp)

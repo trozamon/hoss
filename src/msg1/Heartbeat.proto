@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+package hoss.msg1;
+
 import "Cpu.proto";
 import "Memory.proto";
 

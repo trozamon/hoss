@@ -1,5 +1,7 @@
 syntax = "proto2";
 
+package hoss.msg1;
+
 message ResourceAmount {
   optional int64 used = 1;
   optional int64 total = 2;

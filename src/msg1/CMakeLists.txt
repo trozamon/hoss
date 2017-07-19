@@ -8,5 +8,5 @@ protobuf_generate_cpp(MSG_1_SRCS MSG_1_HDRS
         ResourceAmount.proto
         )
 
-add_library(hoss-msg-1 SHARED ${MSG_1_SRCS})
-target_link_libraries(hoss-msg-1 ${PROTOBUF_LIBRARIES})
+add_library(hoss-msg1 SHARED ${MSG_1_SRCS})
+target_link_libraries(hoss-msg1 ${PROTOBUF_LIBRARIES})
