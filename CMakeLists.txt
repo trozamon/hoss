@@ -17,3 +17,13 @@ find_package(Boost REQUIRED COMPONENTS
 find_package(Protobuf REQUIRED)
 
 add_subdirectory(src)
+
+option(ENABLE_TESTS
+        "Build and run the tests"
+        OFF
+        )
+
+if (ENABLE_TESTS)
+        enable_testing()
+        add_subdirectory(test)
+endif()

@@ -2,11 +2,20 @@ syntax = "proto2";
 
 package hoss.msg1;
 
-import "Cpu.proto";
-import "Memory.proto";
-
 message Heartbeat {
+
+  message Cpu {
+    optional int32 threads_total = 1;
+    optional int32 threads_used = 2;
+  }
+
+  message Memory {
+    optional int64 mb_total = 1;
+    optional int64 mb_used = 2;
+  }
+
   optional string hostname = 1;
   optional Cpu cpu = 2;
   optional Memory memory = 3;
+
 }

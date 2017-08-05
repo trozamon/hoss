@@ -1,5 +1,6 @@
 #include "Builder.hpp"
 #include "core/Log.hpp"
+#include "core/Message.hpp"
 #include "core/Socket.hpp"
 #include "msg1/Heartbeat.pb.h"
 #include <array>
@@ -13,6 +14,7 @@ using boost::asio::ip::tcp;
 using boost::system::error_code;
 using hoss::builder::Builder;
 using hoss::core::Log;
+using hoss::core::Message;
 using hoss::core::Socket;
 using std::array;
 
@@ -87,6 +89,11 @@ int Builder::Impl::run()
 void Builder::Impl::handleConnect(const error_code &error,
                 tcp::resolver::iterator endpoint)
 {
+        if (error)
+        {
+                return;
+        }
+
         log.info("Connected, starting to send heartbeats");
 
         async_read(socket.get(),
@@ -101,16 +108,21 @@ void Builder::Impl::handleConnect(const error_code &error,
 
 void Builder::Impl::handleHeartbeat(const error_code &error)
 {
-        deadline_timer t(svc);
+        if (error)
+        {
+                return;
+        }
+
+        deadline_timer t{svc, boost::posix_time::seconds(2)};
 
         hoss::msg1::Heartbeat hb;
-        async_write(socket.get(), boost::asio::buffer(hb.SerializeAsString()),
+        Message msg{hb};
+        async_write(socket.get(), boost::asio::buffer(msg.buffer()),
                         boost::bind(&Builder::Impl::handleWrite,
                                 this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
 
-        t.expires_from_now(boost::posix_time::milliseconds(2000));
         t.async_wait(boost::bind(&Builder::Impl::handleHeartbeat,
                                 this, boost::asio::placeholders::error));
 }

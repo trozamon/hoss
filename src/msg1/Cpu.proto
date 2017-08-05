@@ -1,9 +1,0 @@
-syntax = "proto2";
-
-package hoss.msg1;
-
-import "ResourceAmount.proto";
-
-message Cpu {
-  optional ResourceAmount threads = 1;
-}
