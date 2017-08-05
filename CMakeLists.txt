@@ -16,6 +16,7 @@ find_package(Boost REQUIRED COMPONENTS
 
 find_package(Protobuf REQUIRED)
 
+add_subdirectory(docs)
 add_subdirectory(src)
 
 option(ENABLE_TESTS
