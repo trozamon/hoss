@@ -1,4 +1,5 @@
 set(CORE_TESTS
+        MessageProcessorTest
         MessageTest
         )
 

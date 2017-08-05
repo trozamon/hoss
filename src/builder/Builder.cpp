@@ -1,11 +1,10 @@
 #include "Builder.hpp"
 #include "core/Log.hpp"
 #include "core/Message.hpp"
-#include "core/Socket.hpp"
 #include "msg1/Heartbeat.pb.h"
-#include <array>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
+#include <vector>
 
 using boost::asio::async_connect;
 using boost::asio::deadline_timer;
@@ -15,8 +14,7 @@ using boost::system::error_code;
 using hoss::builder::Builder;
 using hoss::core::Log;
 using hoss::core::Message;
-using hoss::core::Socket;
-using std::array;
+using std::vector;
 
 class Builder::Impl
 {
@@ -41,9 +39,9 @@ public:
 private:
         io_service svc;
         tcp::resolver resolver;
-        array<char, 4096> buf;
+        vector<char> buf;
         Log log;
-        Socket socket;
+        tcp::socket socket;
 };
 
 Builder::Builder() :
@@ -76,7 +74,7 @@ int Builder::Impl::run()
         tcp::resolver::query query{"127.0.0.1", "4677"};
         tcp::resolver::iterator endpoints = resolver.resolve(query);
 
-        async_connect(socket.get(), endpoints,
+        async_connect(socket, endpoints,
                         boost::bind(&Builder::Impl::handleConnect, this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::iterator));
@@ -96,7 +94,7 @@ void Builder::Impl::handleConnect(const error_code &error,
 
         log.info("Connected, starting to send heartbeats");
 
-        async_read(socket.get(),
+        async_read(socket,
                         boost::asio::buffer(buf),
                         boost::bind(&Builder::Impl::handleRead, this,
                                 boost::asio::placeholders::error,
@@ -117,7 +115,7 @@ void Builder::Impl::handleHeartbeat(const error_code &error)
 
         hoss::msg1::Heartbeat hb;
         Message msg{hb};
-        async_write(socket.get(), boost::asio::buffer(msg.buffer()),
+        async_write(socket, boost::asio::buffer(msg.buffer()),
                         boost::bind(&Builder::Impl::handleWrite,
                                 this,
                                 boost::asio::placeholders::error,

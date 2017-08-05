@@ -45,6 +45,15 @@ public:
         Message(const std::string &raw);
 
         /**
+         * Create a message out of a raw buffer.
+         *
+         * Decodes the raw buffer.
+         *
+         * @param raw the raw buffer
+         */
+        Message(const std::vector<char> &raw);
+
+        /**
          * Create a message out of a heartbeat.
          *
          * @param hb a heartbeat

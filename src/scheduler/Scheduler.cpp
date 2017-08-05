@@ -1,8 +1,7 @@
-#include "BuilderWrapper.hpp"
 #include "Scheduler.hpp"
+#include "Session.hpp"
 #include "core/Log.hpp"
 #include "core/MessageProcessor.hpp"
-#include "core/Socket.hpp"
 #include "msg1/Heartbeat.pb.h"
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
@@ -14,14 +13,10 @@ using boost::system::error_code;
 using hoss::core::Log;
 using hoss::core::Message;
 using hoss::core::MessageType;
-using hoss::core::Socket;
 using hoss::msg1::Heartbeat;
-using hoss::scheduler::BuilderWrapper;
 using hoss::scheduler::Scheduler;
-using std::make_shared;
-using std::map;
-using std::shared_ptr;
-using std::string;
+using hoss::scheduler::Session;
+using std::vector;
 
 class Scheduler::Impl : public hoss::core::MessageProcessor
 {
@@ -30,19 +25,20 @@ public:
 
         int run();
 
-        void handleAccept(Socket &sock);
+        void doAccept();
 
-        void handleRead(Socket &sock, const error_code &error, size_t read);
+        void doReadHeader(Session session);
 
-        void handleReadHeartbeat(const Message &hb);
+        void handleAccept(error_code error);
 
-        void setupParsing();
+        void handleReadHeader(Session session, error_code error, size_t read);
 
 private:
         io_service svc;
         tcp::acceptor acceptor;
+        tcp::socket sock;
         Log log;
-        map<string, BuilderWrapper> builders;
+        vector<Session> sessions;
 };
 
 Scheduler::Scheduler() :
@@ -61,11 +57,10 @@ int Scheduler::run()
 
 Scheduler::Impl::Impl() :
         acceptor{svc, tcp::endpoint{tcp::v4(), DEFAULT_PORT}},
-        log{Log::getLogger("Scheduler")}
+        log{Log::getLogger("Scheduler")},
+        sock{svc}
 {
-        Socket sock{svc};
-        acceptor.async_accept(sock.get(), boost::bind(
-                                &Scheduler::Impl::handleAccept, this, sock));
+        doAccept();
 }
 
 int Scheduler::Impl::run()
@@ -75,34 +70,60 @@ int Scheduler::Impl::run()
         return 0;
 }
 
-void Scheduler::Impl::handleAccept(Socket &sock)
+void Scheduler::Impl::doAccept()
 {
-        async_read(sock.get(), boost::asio::buffer(sock.buffer()), boost::bind(
-                                &Scheduler::Impl::handleRead,
+        acceptor.async_accept(sock, boost::bind(
+                                &Scheduler::Impl::handleAccept,
                                 this,
-                                sock,
-                                boost::asio::placeholders::error,
-                                boost::asio::placeholders::bytes_transferred
-                                ));
+                                boost::asio::placeholders::error
+                                )
+                        );
 }
 
-void Scheduler::Impl::handleRead(Socket &sock, const error_code &error,
+void Scheduler::Impl::handleAccept(error_code error)
+{
+        if (!error)
+        {
+                Session s{std::move(sock)};
+
+                sessions.push_back(s);
+                doReadHeader(s);
+        }
+
+        doAccept();
+}
+
+void Scheduler::Impl::doReadHeader(Session session)
+{
+        auto buf = boost::asio::buffer(session.buffer(),
+                        Message::HEADER_SIZE);
+        auto handler = boost::bind(&Scheduler::Impl::handleReadHeader,
+                        this,
+                        session,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred
+                        );
+
+        async_read(session.socket(), buf, handler);
+}
+
+void Scheduler::Impl::handleReadHeader(Session session, error_code error,
                 size_t read)
 {
-        log.info("Read some stuff!");
-        process(sock.buffer());
-}
+        if (error)
+        {
+                log.warning("Could not read header!");
+                doReadHeader(session);
+                return;
+        }
 
-void Scheduler::Impl::handleReadHeartbeat(const Message &hb)
-{
-        log.info("Got a heartbeat!");
-}
+        if (read != 3)
+        {
+                log.warning("Did not read the header size");
+                doReadHeader(session);
+                return;
+        }
 
-void Scheduler::Impl::setupParsing()
-{
-        handle(MessageType::Heartbeat1, std::bind(
-                                &Scheduler::Impl::handleReadHeartbeat,
-                                this,
-                                std::placeholders::_1)
-              );
+        Message msg{session.buffer()};
+        log.info("Got a thing!");
 }

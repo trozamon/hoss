@@ -15,6 +15,14 @@ Message::Message(const std::string &raw)
         buf << raw;
 }
 
+Message::Message(const std::vector<char> &raw)
+{
+        for (auto it = raw.begin(); it != raw.end(); it++)
+        {
+                buf << *it;
+        }
+}
+
 Message::Message(const Heartbeat &hb)
 {
         pack(MessageType::Heartbeat1, hb.SerializeAsString());

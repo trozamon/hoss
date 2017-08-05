@@ -1,4 +1,5 @@
-add_library(hoss-builder SHARED
+# This library is not meant to be installed
+add_library(hoss-builder STATIC
         Builder.cpp
         )
 
