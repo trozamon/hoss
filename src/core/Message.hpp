@@ -72,7 +72,7 @@ public:
          *
          * @return the message type
          */
-        MessageType type();
+        MessageType type() const;
 
         /**
          * Decode and return the actual protobuf message.

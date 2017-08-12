@@ -44,7 +44,7 @@ string Message::buffer() const
         return buf.str();
 }
 
-MessageType Message::type()
+MessageType Message::type() const
 {
         string raw = buf.str();
 

@@ -13,6 +13,7 @@ using boost::system::error_code;
 using hoss::core::Log;
 using hoss::core::Message;
 using hoss::core::MessageType;
+using hoss::core::linesep;
 using hoss::msg1::Heartbeat;
 using hoss::scheduler::Scheduler;
 using hoss::scheduler::Session;
@@ -31,7 +32,11 @@ public:
 
         void handleAccept(error_code error);
 
+        void handleHeartbeat1(const Message &msg);
+
         void handleReadHeader(Session session, error_code error, size_t read);
+
+        void setupProcessing();
 
 private:
         io_service svc;
@@ -57,10 +62,18 @@ int Scheduler::run()
 
 Scheduler::Impl::Impl() :
         acceptor{svc, tcp::endpoint{tcp::v4(), DEFAULT_PORT}},
-        log{Log::getLogger("Scheduler")},
-        sock{svc}
+        sock{svc},
+        log{Log::getLogger("Scheduler")}
 {
+        setupProcessing();
         doAccept();
+}
+
+void Scheduler::Impl::setupProcessing()
+{
+        handle(MessageType::Heartbeat1,
+                        std::bind(&Scheduler::Impl::handleHeartbeat1, this,
+                                std::placeholders::_1));
 }
 
 int Scheduler::Impl::run()
@@ -125,5 +138,15 @@ void Scheduler::Impl::handleReadHeader(Session session, error_code error,
         }
 
         Message msg{session.buffer()};
-        log.info("Got a thing!");
+
+        log.info() << "Received header for a message of length " <<
+                msg.length() << " and type " <<
+                static_cast<long>(msg.type()) << linesep;
+
+        process(msg);
+}
+
+void Scheduler::Impl::handleHeartbeat1(const Message &msg)
+{
+        log.info() << "Got a heartbeat!" << linesep;
 }

@@ -20,6 +20,8 @@ public:
 
         void process(const std::vector<char> &raw);
 
+        void process(const Message &msg);
+
         void handle(MessageType type,
                         const std::function<void(const Message &)> &handler);
 
