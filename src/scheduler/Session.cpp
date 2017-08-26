@@ -8,6 +8,8 @@ using std::vector;
 class Session::Impl
 {
 public:
+        Impl();
+
         Impl(tcp::socket sock);
 
         tcp::socket & socket();
@@ -16,11 +18,17 @@ public:
 
         size_t bufferLength();
 
+        Session::Key key() const;
+
 private:
         tcp::socket sock;
         vector<char> buf;
         size_t bufLen;
 };
+
+Session::Session()
+{
+}
 
 Session::Session(tcp::socket sock) :
         impl{make_shared<Impl>(std::move(sock))}
@@ -37,6 +45,11 @@ vector<char> & Session::buffer()
         return impl->buffer();
 }
 
+Session::Key Session::key() const
+{
+        return impl->key();
+}
+
 Session::Impl::Impl(tcp::socket sock) :
         sock{std::move(sock)}
 {
@@ -51,4 +64,23 @@ tcp::socket & Session::Impl::socket()
 vector<char> & Session::Impl::buffer()
 {
         return buf;
+}
+
+Session::Key Session::Impl::key() const
+{
+        return Session::Key{"", 0};
+}
+
+Session::Key::Key(const std::string &hostname, uint16_t port)
+{
+}
+
+size_t Session::Key::hash() const
+{
+        return 0;
+}
+
+bool Session::Key::operator==(const Key &other) const
+{
+        return false;
 }

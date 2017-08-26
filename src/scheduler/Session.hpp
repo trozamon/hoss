@@ -14,11 +14,25 @@ namespace scheduler
 class Session
 {
 public:
+        class Key
+        {
+        public:
+                Key(const std::string &hostname, uint16_t port);
+
+                size_t hash() const;
+
+                bool operator==(const Key &other) const;
+        };
+
+        Session();
+
         Session(boost::asio::ip::tcp::socket sock);
 
         boost::asio::ip::tcp::socket & socket();
 
         std::vector<char> & buffer();
+
+        Key key() const;
 
 private:
         class Impl;

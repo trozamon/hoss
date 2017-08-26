@@ -2,7 +2,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 # This is not meant to be installed
 add_library(hoss-scheduler STATIC
-        BuilderSession.cpp
         Scheduler.cpp
         Session.cpp
         )

@@ -6,6 +6,7 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <memory>
+#include <unordered_map>
 
 using boost::asio::io_service;
 using boost::asio::ip::tcp;
@@ -17,7 +18,14 @@ using hoss::core::linesep;
 using hoss::msg1::Heartbeat;
 using hoss::scheduler::Scheduler;
 using hoss::scheduler::Session;
-using std::vector;
+using std::string;
+using std::unordered_map;
+
+class KeyHash
+{
+public:
+        size_t operator()(const Session::Key &k) const;
+};
 
 class Scheduler::Impl : public hoss::core::MessageProcessor
 {
@@ -43,7 +51,7 @@ private:
         tcp::acceptor acceptor;
         tcp::socket sock;
         Log log;
-        vector<Session> sessions;
+        unordered_map<Session::Key, Session, KeyHash> sessions;
 };
 
 Scheduler::Scheduler() :
@@ -99,7 +107,7 @@ void Scheduler::Impl::handleAccept(error_code error)
         {
                 Session s{std::move(sock)};
 
-                sessions.push_back(s);
+                sessions[s.key()] = s;
                 doReadHeader(s);
         }
 
@@ -148,5 +156,17 @@ void Scheduler::Impl::handleReadHeader(Session session, error_code error,
 
 void Scheduler::Impl::handleHeartbeat1(const Message &msg)
 {
-        log.info() << "Got a heartbeat!" << linesep;
+        Heartbeat hb = msg.message<Heartbeat>();
+        Session::Key k{hb.hostname(), 0};
+
+        if (sessions.count(k) == 0)
+        {
+                log.info() << "Got new connection from " << hb.hostname() <<
+                        linesep;
+        }
+}
+
+size_t KeyHash::operator()(const Session::Key &k) const
+{
+        return k.hash();
 }
