@@ -6,9 +6,12 @@ add_library(hoss-scheduler STATIC
         Session.cpp
         )
 
+target_link_libraries(hoss-scheduler
+        hoss-core
+        )
+
 add_executable(hoss-schedulerd hoss-schedulerd.cpp)
 target_link_libraries(hoss-schedulerd
-        hoss-core
         hoss-scheduler
         ${Boost_PROGRAM_OPTIONS_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}

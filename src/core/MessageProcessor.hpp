@@ -2,6 +2,7 @@
 #define HOSS_CORE_MESSAGE_PROCESSOR_HPP
 
 #include "Message.hpp"
+#include <functional>
 #include <map>
 
 namespace hoss

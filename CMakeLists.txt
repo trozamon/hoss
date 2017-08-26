@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.5)
 project(hoss
         LANGUAGES CXX
         VERSION 0.0.0

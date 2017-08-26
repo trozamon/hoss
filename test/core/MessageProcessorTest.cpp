@@ -54,10 +54,10 @@ BOOST_AUTO_TEST_CASE(processedAHeartbeat)
 {
         F f;
 
-        BOOST_TEST(1 == f.processor.hbs.size());
-        BOOST_TEST("hey.example.com" == f.processor.hbs[0].hostname());
-        BOOST_TEST(4 == f.processor.hbs[0].cpu().threads_total());
-        BOOST_TEST(3 == f.processor.hbs[0].cpu().threads_used());
-        BOOST_TEST(4096 == f.processor.hbs[0].memory().mb_total());
-        BOOST_TEST(2048 == f.processor.hbs[0].memory().mb_used());
+        BOOST_CHECK_EQUAL(1, f.processor.hbs.size());
+        BOOST_CHECK_EQUAL("hey.example.com", f.processor.hbs[0].hostname());
+        BOOST_CHECK_EQUAL(4, f.processor.hbs[0].cpu().threads_total());
+        BOOST_CHECK_EQUAL(3, f.processor.hbs[0].cpu().threads_used());
+        BOOST_CHECK_EQUAL(4096, f.processor.hbs[0].memory().mb_total());
+        BOOST_CHECK_EQUAL(2048, f.processor.hbs[0].memory().mb_used());
 }

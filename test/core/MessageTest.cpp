@@ -27,7 +27,7 @@ public:
 BOOST_AUTO_TEST_CASE(heartbeatEncodeType)
 {
         F f;
-        BOOST_TEST(MessageType::Heartbeat1 == f.msg.type());
+        BOOST_CHECK_EQUAL(MessageType::Heartbeat1, f.msg.type());
 }
 
 BOOST_AUTO_TEST_CASE(heartbeatEncodeLength)
@@ -37,7 +37,7 @@ BOOST_AUTO_TEST_CASE(heartbeatEncodeLength)
 
         f.hb.SerializeToString(&s);
 
-        BOOST_TEST((s.size() + 3) == f.msg.length());
+        BOOST_CHECK_EQUAL((s.size() + 3), f.msg.length());
 }
 
 BOOST_AUTO_TEST_CASE(heartbeatEncodeData)
@@ -45,9 +45,13 @@ BOOST_AUTO_TEST_CASE(heartbeatEncodeData)
         F f;
         Heartbeat parsed = f.msg.message<Heartbeat>();
 
-        BOOST_TEST(f.hb.hostname() == parsed.hostname());
-        BOOST_TEST(f.hb.cpu().threads_total() == parsed.cpu().threads_total());
-        BOOST_TEST(f.hb.cpu().threads_used() == parsed.cpu().threads_used());
-        BOOST_TEST(f.hb.memory().mb_total() == parsed.memory().mb_total());
-        BOOST_TEST(f.hb.memory().mb_used() == parsed.memory().mb_used());
+        BOOST_CHECK_EQUAL(f.hb.hostname(), parsed.hostname());
+        BOOST_CHECK_EQUAL(f.hb.cpu().threads_total(),
+                        parsed.cpu().threads_total());
+        BOOST_CHECK_EQUAL(f.hb.cpu().threads_used(),
+                        parsed.cpu().threads_used());
+        BOOST_CHECK_EQUAL(f.hb.memory().mb_total(),
+                        parsed.memory().mb_total());
+        BOOST_CHECK_EQUAL(f.hb.memory().mb_used(),
+                        parsed.memory().mb_used());
 }
