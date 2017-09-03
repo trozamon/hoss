@@ -16,6 +16,9 @@ find_package(Boost REQUIRED COMPONENTS
 
 find_package(Protobuf REQUIRED)
 
+find_program(SPHINX_BUILD sphinx-build)
+find_program(DOXYGEN doxygen)
+
 add_subdirectory(docs)
 add_subdirectory(src)
 

@@ -1,10 +1,11 @@
 #include "Builder.hpp"
-#include "core/Log.hpp"
-#include "core/Message.hpp"
+#include "core.hpp"
 #include "msg1/Heartbeat.pb.h"
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <vector>
+
+namespace si = hoss::core::system_info;
 
 using boost::asio::async_connect;
 using boost::asio::deadline_timer;
@@ -39,8 +40,10 @@ public:
 private:
         io_service svc;
         tcp::resolver resolver;
+        deadline_timer hbTimer;
         vector<char> buf;
         Log log;
+        size_t threadsInUse;
         tcp::socket socket;
 };
 
@@ -60,7 +63,9 @@ int Builder::run()
 
 Builder::Impl::Impl() :
         resolver{svc},
+        hbTimer{svc},
         log{Log::getLogger("Builder")},
+        threadsInUse{0},
         socket{svc}
 {
 }
@@ -111,9 +116,15 @@ void Builder::Impl::handleHeartbeat(const error_code &error)
                 return;
         }
 
-        deadline_timer t{svc, boost::posix_time::seconds(2)};
 
         hoss::msg1::Heartbeat hb;
+
+        hb.set_hostname(si::hostname());
+        hb.mutable_cpu()->set_threads_total(si::cpu_threads_total());
+        hb.mutable_cpu()->set_threads_used(threadsInUse);
+        hb.mutable_memory()->set_mb_total(si::memory_mb_total());
+        hb.mutable_memory()->set_mb_used(0);
+
         Message msg{hb};
         async_write(socket, boost::asio::buffer(msg.buffer()),
                         boost::bind(&Builder::Impl::handleWrite,
@@ -121,7 +132,8 @@ void Builder::Impl::handleHeartbeat(const error_code &error)
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
 
-        t.async_wait(boost::bind(&Builder::Impl::handleHeartbeat,
+        hbTimer.expires_from_now(boost::posix_time::seconds(2));
+        hbTimer.async_wait(boost::bind(&Builder::Impl::handleHeartbeat,
                                 this, boost::asio::placeholders::error));
 }
 

@@ -38,11 +38,15 @@ public:
 
         void doReadHeader(Session session);
 
+        void doReadBody(Session session, size_t len);
+
         void handleAccept(error_code error);
 
         void handleHeartbeat1(const Message &msg);
 
         void handleReadHeader(Session session, error_code error, size_t read);
+
+        void handleReadBody(Session session, error_code error, size_t read);
 
         void setupProcessing();
 
@@ -128,6 +132,24 @@ void Scheduler::Impl::doReadHeader(Session session)
         async_read(session.socket(), buf, handler);
 }
 
+void Scheduler::Impl::doReadBody(Session session, size_t len)
+{
+        session.buffer().resize(len);
+
+        auto buf = boost::asio::buffer(
+                        session.buffer().data() + Message::HEADER_SIZE,
+                        len - Message::HEADER_SIZE);
+
+        auto handler = boost::bind(&Scheduler::Impl::handleReadBody,
+                        this,
+                        session,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred
+                        );
+
+        async_read(session.socket(), buf, handler);
+}
+
 void Scheduler::Impl::handleReadHeader(Session session, error_code error,
                 size_t read)
 {
@@ -138,7 +160,7 @@ void Scheduler::Impl::handleReadHeader(Session session, error_code error,
                 return;
         }
 
-        if (read != 3)
+        if (read != Message::HEADER_SIZE)
         {
                 log.warning("Did not read the header size");
                 doReadHeader(session);
@@ -146,12 +168,34 @@ void Scheduler::Impl::handleReadHeader(Session session, error_code error,
         }
 
         Message msg{session.buffer()};
+        doReadBody(session, msg.length());
+}
 
-        log.info() << "Received header for a message of length " <<
+void Scheduler::Impl::handleReadBody(Session session, error_code error,
+                size_t read)
+{
+        if (error)
+        {
+                log.warning("Could not read body!");
+                doReadHeader(session);
+                return;
+        }
+
+        Message msg{session.buffer()};
+
+        if (read != msg.length() - Message::HEADER_SIZE)
+        {
+                log.warning("Did not read entire message!");
+                doReadHeader(session);
+                return;
+        }
+
+        log.info() << "Received a message of length " <<
                 msg.length() << " and type " <<
                 static_cast<long>(msg.type()) << linesep;
 
         process(msg);
+        doReadHeader(session);
 }
 
 void Scheduler::Impl::handleHeartbeat1(const Message &msg)
@@ -161,8 +205,10 @@ void Scheduler::Impl::handleHeartbeat1(const Message &msg)
 
         if (sessions.count(k) == 0)
         {
-                log.info() << "Got new connection from " << hb.hostname() <<
-                        linesep;
+                log.info() << "Got new connection from builder " <<
+                        hb.hostname() << linesep;
+
+                //sessions[k] =
         }
 }
 

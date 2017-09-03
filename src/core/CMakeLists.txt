@@ -5,6 +5,7 @@ add_library(hoss-core SHARED
         Log.cpp
         Message.cpp
         MessageProcessor.cpp
+        system_info.cpp
         )
 
 target_link_libraries(hoss-core

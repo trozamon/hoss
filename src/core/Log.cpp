@@ -141,7 +141,7 @@ void Log::add(const string &s)
                 break;
         }
 
-        buf.clear();
+        buf.str("");
 }
 
 Log & operator<<(Log &log, const std::string &msg)

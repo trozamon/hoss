@@ -11,6 +11,15 @@ namespace hoss
 namespace scheduler
 {
 
+/**
+ * Maintains sessions for clients connected to a scheduler.
+ *
+ * There are a few "types" of client sessions:
+ *
+ * <ul>
+ *     <li>Builder sessions</li>
+ * </ul>
+ */
 class Session
 {
 public:
@@ -27,6 +36,8 @@ public:
         Session();
 
         Session(boost::asio::ip::tcp::socket sock);
+
+        void socket(boost::asio::ip::tcp::socket sock);
 
         boost::asio::ip::tcp::socket & socket();
 
