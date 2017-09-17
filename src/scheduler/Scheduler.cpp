@@ -3,11 +3,16 @@
 #include "core/Log.hpp"
 #include "core/MessageProcessor.hpp"
 #include "msg1/Heartbeat.pb.h"
+#include <boost/any.hpp>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <memory>
 #include <unordered_map>
 
+namespace error = boost::asio::error;
+
+using boost::any;
+using boost::any_cast;
 using boost::asio::io_service;
 using boost::asio::ip::tcp;
 using boost::system::error_code;
@@ -42,7 +47,7 @@ public:
 
         void handleAccept(error_code error);
 
-        void handleHeartbeat1(const Message &msg);
+        void handleHeartbeat1(const Message &msg, const any &data);
 
         void handleReadHeader(Session session, error_code error, size_t read);
 
@@ -85,7 +90,7 @@ void Scheduler::Impl::setupProcessing()
 {
         handle(MessageType::Heartbeat1,
                         std::bind(&Scheduler::Impl::handleHeartbeat1, this,
-                                std::placeholders::_1));
+                                std::placeholders::_1, std::placeholders::_2));
 }
 
 int Scheduler::Impl::run()
@@ -155,8 +160,19 @@ void Scheduler::Impl::handleReadHeader(Session session, error_code error,
 {
         if (error)
         {
-                log.warning("Could not read header!");
-                doReadHeader(session);
+                if (error == error::eof)
+                {
+                        log.info() << "Client disconnected" << linesep;
+                }
+                else
+                {
+                        log.warning() <<
+                                "Could not read header - got error " <<
+                                error.value() << " with message " <<
+                                error.message() << linesep;
+                        doReadHeader(session);
+                }
+
                 return;
         }
 
@@ -194,11 +210,12 @@ void Scheduler::Impl::handleReadBody(Session session, error_code error,
                 msg.length() << " and type " <<
                 static_cast<long>(msg.type()) << linesep;
 
-        process(msg);
+        any thing = session;
+        process(msg, thing);
         doReadHeader(session);
 }
 
-void Scheduler::Impl::handleHeartbeat1(const Message &msg)
+void Scheduler::Impl::handleHeartbeat1(const Message &msg, const any &data)
 {
         Heartbeat hb = msg.message<Heartbeat>();
         Session::Key k{hb.hostname(), 0};
@@ -208,7 +225,8 @@ void Scheduler::Impl::handleHeartbeat1(const Message &msg)
                 log.info() << "Got new connection from builder " <<
                         hb.hostname() << linesep;
 
-                //sessions[k] =
+                const Session &s = any_cast<Session>(data);
+                sessions[k] = s;
         }
 }
 

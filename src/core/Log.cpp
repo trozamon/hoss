@@ -87,14 +87,49 @@ Log::Level Log::getLevel()
         return level;
 }
 
-void Log::add(long i)
+void Log::add(char c)
+{
+        buf << c;
+}
+
+void Log::add(unsigned char c)
+{
+        buf << c;
+}
+
+void Log::add(short s)
+{
+        buf << s;
+}
+
+void Log::add(unsigned short s)
+{
+        buf << s;
+}
+
+void Log::add(int i)
 {
         buf << i;
 }
 
-void Log::add(unsigned long i)
+void Log::add(unsigned int i)
 {
         buf << i;
+}
+
+void Log::add(long l)
+{
+        buf << l;
+}
+
+void Log::add(unsigned long l)
+{
+        buf << l;
+}
+
+void Log::add(float f)
+{
+        buf << f;
 }
 
 void Log::add(double d)
@@ -156,20 +191,62 @@ Log & operator<<(Log &log, const char *msg)
         return log;
 }
 
-Log & operator<<(Log &log, long i)
+Log & operator<<(Log &log, long l)
 {
-        log.add(i);
+        log.add(l);
         return log;
 }
 
-Log & operator<<(Log &log, unsigned long i)
+Log & operator<<(Log &log, unsigned long l)
 {
-        log.add(i);
+        log.add(l);
         return log;
 }
 
 Log & operator<<(Log &log, double d)
 {
         log.add(d);
+        return log;
+}
+
+Log & operator<<(Log &log, char c)
+{
+        log.add(c);
+        return log;
+}
+
+Log & operator<<(Log &log, unsigned char c)
+{
+        log.add(c);
+        return log;
+}
+
+Log & operator<<(Log &log, short s)
+{
+        log.add(s);
+        return log;
+}
+
+Log & operator<<(Log &log, unsigned short s)
+{
+        log.add(s);
+        return log;
+}
+
+Log & operator<<(Log &log, int i)
+{
+        log.add(i);
+        return log;
+}
+
+Log & operator<<(Log &log, unsigned int i)
+{
+        log.add(i);
+        return log;
+}
+
+Log & operator<<(Log &log, float f)
+{
+        log.add(f);
         return log;
 }

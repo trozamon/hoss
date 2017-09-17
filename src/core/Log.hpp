@@ -41,8 +41,15 @@ public:
         void fatal(const std::string &msg);
 
         void add(const std::string &s);
-        void add(long i);
-        void add(unsigned long i);
+        void add(char c);
+        void add(unsigned char c);
+        void add(short s);
+        void add(unsigned short s);
+        void add(int i);
+        void add(unsigned int i);
+        void add(long l);
+        void add(unsigned long l);
+        void add(float f);
         void add(double d);
 
         std::string buffer();
@@ -70,8 +77,15 @@ private:
 
 hoss::core::Log & operator<<(hoss::core::Log &log, const std::string &msg);
 hoss::core::Log & operator<<(hoss::core::Log &log, const char *msg);
-hoss::core::Log & operator<<(hoss::core::Log &log, long i);
-hoss::core::Log & operator<<(hoss::core::Log &log, unsigned long i);
+hoss::core::Log & operator<<(hoss::core::Log &log, char c);
+hoss::core::Log & operator<<(hoss::core::Log &log, unsigned char c);
+hoss::core::Log & operator<<(hoss::core::Log &log, short s);
+hoss::core::Log & operator<<(hoss::core::Log &log, unsigned short s);
+hoss::core::Log & operator<<(hoss::core::Log &log, int i);
+hoss::core::Log & operator<<(hoss::core::Log &log, unsigned int i);
+hoss::core::Log & operator<<(hoss::core::Log &log, long l);
+hoss::core::Log & operator<<(hoss::core::Log &log, unsigned long l);
+hoss::core::Log & operator<<(hoss::core::Log &log, float f);
 hoss::core::Log & operator<<(hoss::core::Log &log, double d);
 
 #endif /* HOSS_CORE_LOG_HPP */
