@@ -71,7 +71,9 @@ Session::Key Session::Impl::key() const
         return Session::Key{"", 0};
 }
 
-Session::Key::Key(const std::string &hostname, uint16_t port)
+Session::Key::Key(const std::string &hostname, uint16_t port) :
+        hostname{hostname},
+        port{port}
 {
 }
 
@@ -82,5 +84,11 @@ size_t Session::Key::hash() const
 
 bool Session::Key::operator==(const Key &other) const
 {
-        return false;
+        return hostname == other.hostname &&
+                port == other.port;
+}
+
+bool Session::Key::operator!=(const Key &other) const
+{
+        return !(*this == other);
 }

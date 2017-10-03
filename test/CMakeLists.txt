@@ -7,3 +7,4 @@ find_package(Boost REQUIRED COMPONENTS
         )
 
 add_subdirectory(core)
+add_subdirectory(scheduler)

@@ -31,6 +31,12 @@ public:
                 size_t hash() const;
 
                 bool operator==(const Key &other) const;
+
+                bool operator!=(const Key &other) const;
+
+        private:
+                std::string hostname;
+                uint16_t port;
         };
 
         Session();
