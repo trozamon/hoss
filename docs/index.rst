@@ -10,7 +10,8 @@ Welcome to hoss's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-
+   introduction
+   development
 
 Indices and tables
 ==================
