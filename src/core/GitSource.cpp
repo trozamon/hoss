@@ -9,29 +9,45 @@ public:
         Impl();
 
         void download();
+
+        void setUrl(const string &url);
+
+        void setPath(const string &path);
+
+private:
+        string url;
+        string path;
 };
 
 GitSource::GitSource()
 {
 }
 
-GitSource & GitSource::url(const std::string &url);
+GitSource & GitSource::url(const string &url)
+{
+        impl->setUrl(url);
+        return *this;
+}
 
-GitSource & GitSource::path(const std::string &path);
+GitSource & GitSource::path(const string &path)
+{
+        impl->setPath(path);
+        return *this;
+}
 
 void GitSource::download()
 {
         impl->download();
 }
 
-GitSource::Impl::Impl(const string &path) :
+void GitSource::Impl::setUrl(const string &u)
 {
+        url = u;
 }
 
-GitSource::Impl::Impl(const string &path, const string &url) :
-        path{path},
-        url{url}
+void GitSource::Impl::setPath(const string &p)
 {
+        path = p;
 }
 
 #ifdef HOSS_ENABLE_VCS_GIT

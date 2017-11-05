@@ -9,7 +9,8 @@ Principles
   services and libraries. Upgrades for minor and patch versions should incur
   zero downtime.
 * Hoss should be `bug free`_
-  
+* Hoss should be secure, but built-in security should be simple
+
 Design
 ======
 
