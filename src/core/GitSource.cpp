@@ -58,7 +58,7 @@ void GitSource::Impl::download()
 {
         git_repository *repo = nullptr;
 
-        int err = git_clone(&repo, url.c_str(), path.c_str(), NULL);
+        /*int err =*/ git_clone(&repo, url.c_str(), path.c_str(), NULL);
 }
 
 #else /* ifdef HOSS_ENABLE_VCS_GIT */

@@ -90,7 +90,7 @@ int Builder::Impl::run()
 }
 
 void Builder::Impl::handleConnect(const error_code &error,
-                tcp::resolver::iterator endpoint)
+                tcp::resolver::iterator /*endpoint*/)
 {
         if (error)
         {
@@ -137,13 +137,14 @@ void Builder::Impl::handleHeartbeat(const error_code &error)
                                 this, boost::asio::placeholders::error));
 }
 
-void Builder::Impl::handleRead(const error_code &error, std::size_t bytesRead)
+void Builder::Impl::handleRead(const error_code &/*error*/,
+                std::size_t /*bytesRead*/)
 {
         log.info("Read something");
 }
 
-void Builder::Impl::handleWrite(const error_code &error,
-                std::size_t bytesWritten)
+void Builder::Impl::handleWrite(const error_code & /*error*/,
+                std::size_t /*bytesWritten*/)
 {
         log.info("Sent a heartbeat");
 }
