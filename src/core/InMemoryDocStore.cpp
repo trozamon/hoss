@@ -4,8 +4,11 @@ using hoss::core::DocCollection;
 using hoss::core::InMemoryDocCollection;
 using hoss::core::InMemoryDocStore;
 using std::shared_ptr;
+using std::string;
+using std::unordered_map;
 
-InMemoryDocStore::InMemoryDocStore()
+InMemoryDocStore::InMemoryDocStore() :
+        collections{new unordered_map<string, InMemoryDocCollection>()}
 {
 }
 
