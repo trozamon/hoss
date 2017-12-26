@@ -16,6 +16,7 @@ using boost::any_cast;
 using boost::asio::io_service;
 using boost::asio::ip::tcp;
 using boost::system::error_code;
+using hoss::core::DocStore;
 using hoss::core::Log;
 using hoss::core::Message;
 using hoss::core::MessageType;
@@ -23,6 +24,7 @@ using hoss::core::linesep;
 using hoss::msg1::Heartbeat;
 using hoss::scheduler::Scheduler;
 using hoss::scheduler::Session;
+using std::shared_ptr;
 using std::string;
 using std::unordered_map;
 
@@ -35,7 +37,7 @@ public:
 class Scheduler::Impl : public hoss::core::MessageProcessor
 {
 public:
-        Impl();
+        Impl(shared_ptr<DocStore> store);
 
         int run();
 
@@ -60,11 +62,12 @@ private:
         tcp::acceptor acceptor;
         tcp::socket sock;
         Log log;
+        shared_ptr<DocStore> store;
         unordered_map<Session::Key, Session, KeyHash> sessions;
 };
 
-Scheduler::Scheduler() :
-        impl{new Impl()}
+Scheduler::Scheduler(shared_ptr<DocStore> store) :
+        impl{new Impl(store)}
 {
 }
 
@@ -77,10 +80,11 @@ int Scheduler::run()
         return impl->run();
 }
 
-Scheduler::Impl::Impl() :
+Scheduler::Impl::Impl(shared_ptr<DocStore> store) :
         acceptor{svc, tcp::endpoint{tcp::v4(), DEFAULT_PORT}},
         sock{svc},
-        log{Log::getLogger("Scheduler")}
+        log{Log::getLogger("Scheduler")},
+        store{store}
 {
         setupProcessing();
         doAccept();
@@ -95,6 +99,8 @@ void Scheduler::Impl::setupProcessing()
 
 int Scheduler::Impl::run()
 {
+        log.info() << "Starting scheduler on port " << DEFAULT_PORT << linesep;
+
         svc.run();
 
         return 0;

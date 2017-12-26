@@ -1,4 +1,9 @@
 set(CORE_TESTS
+        DocTest
+        HttpRouteTest
+        HttpServerTest
+        InMemoryDocCollectionTest
+        InMemoryDocStoreTest
         MessageProcessorTest
         MessageTest
         )

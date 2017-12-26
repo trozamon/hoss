@@ -1,10 +1,10 @@
-#include "Scheduler.hpp"
+#include "Server.hpp"
 #include <boost/program_options.hpp>
 #include <iostream>
 
 namespace po = boost::program_options;
 
-using hoss::scheduler::Scheduler;
+using hoss::scheduler::Server;
 using std::cout;
 using std::endl;
 using std::string;
@@ -38,7 +38,7 @@ static void print_help()
 int main(int argc, char **argv)
 {
         po::variables_map args = parse_args(argc, argv);
-        Scheduler s;
+        Server s;
 
         if (args.count("help"))
         {

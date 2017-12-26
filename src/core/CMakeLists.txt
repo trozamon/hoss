@@ -14,7 +14,15 @@ endif()
 
 add_library(hoss-core SHARED
         Configuration.cpp
+        Doc.cpp
+        DocCollectionResult.cpp
         GitSource.cpp
+        HttpRequest.cpp
+        HttpResponse.cpp
+        HttpRoute.cpp
+        HttpServer.cpp
+        InMemoryDocCollection.cpp
+        InMemoryDocStore.cpp
         Log.cpp
         Message.cpp
         MessageProcessor.cpp
@@ -28,4 +36,5 @@ target_link_libraries(hoss-core
         ${Boost_LOG_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         git2
+        microhttpd
         )
