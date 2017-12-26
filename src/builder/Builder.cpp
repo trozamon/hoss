@@ -119,7 +119,7 @@ void Builder::Impl::handleHeartbeat(const error_code &error)
 
         hoss::msg1::Heartbeat hb;
 
-        hb.set_hostname(si::hostname());
+        hb.set_name(si::hostname());
         hb.mutable_cpu()->set_threads_total(si::cpu_threads_total());
         hb.mutable_cpu()->set_threads_used(threadsInUse);
         hb.mutable_memory()->set_mb_total(si::memory_mb_total());

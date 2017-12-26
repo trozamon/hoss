@@ -224,12 +224,12 @@ void Scheduler::Impl::handleReadBody(Session session, error_code error,
 void Scheduler::Impl::handleHeartbeat1(const Message &msg, const any &data)
 {
         Heartbeat hb = msg.message<Heartbeat>();
-        Session::Key k{hb.hostname(), 0};
+        Session::Key k{hb.name(), 0};
 
         if (sessions.count(k) == 0)
         {
                 log.info() << "Got new connection from builder " <<
-                        hb.hostname() << linesep;
+                        hb.name() << linesep;
 
                 const Session &s = any_cast<Session>(data);
                 sessions[k] = s;

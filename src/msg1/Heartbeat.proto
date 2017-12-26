@@ -14,7 +14,7 @@ message Heartbeat {
     optional int64 mb_used = 2;
   }
 
-  optional string hostname = 1;
+  optional string name = 1;
   optional Cpu cpu = 2;
   optional Memory memory = 3;
 

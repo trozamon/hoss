@@ -44,7 +44,7 @@ public:
         {
                 Heartbeat hb;
 
-                hb.set_hostname("hey.example.com");
+                hb.set_name("hey.example.com");
                 hb.mutable_cpu()->set_threads_total(4);
                 hb.mutable_cpu()->set_threads_used(3);
                 hb.mutable_memory()->set_mb_total(4096);
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(processedAHeartbeat)
         F f;
 
         BOOST_CHECK_EQUAL(1, f.processor.hbs.size());
-        BOOST_CHECK_EQUAL("hey.example.com", f.processor.hbs[0].hostname());
+        BOOST_CHECK_EQUAL("hey.example.com", f.processor.hbs[0].name());
         BOOST_CHECK_EQUAL(4, f.processor.hbs[0].cpu().threads_total());
         BOOST_CHECK_EQUAL(3, f.processor.hbs[0].cpu().threads_used());
         BOOST_CHECK_EQUAL(4096, f.processor.hbs[0].memory().mb_total());

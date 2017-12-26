@@ -12,7 +12,7 @@ class F
 public:
         F()
         {
-                hb.set_hostname("optimus.example.com");
+                hb.set_name("optimus.example.com");
                 hb.mutable_cpu()->set_threads_total(4);
                 hb.mutable_cpu()->set_threads_used(1);
                 hb.mutable_memory()->set_mb_total(4096);
@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(heartbeatEncodeData)
         F f;
         Heartbeat parsed = f.msg.message<Heartbeat>();
 
-        BOOST_CHECK_EQUAL(f.hb.hostname(), parsed.hostname());
+        BOOST_CHECK_EQUAL(f.hb.name(), parsed.name());
         BOOST_CHECK_EQUAL(f.hb.cpu().threads_total(),
                         parsed.cpu().threads_total());
         BOOST_CHECK_EQUAL(f.hb.cpu().threads_used(),
