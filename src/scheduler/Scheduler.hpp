@@ -2,7 +2,6 @@
 #define HOSS_SCHEDULER_SCHEDULER_HPP
 
 #include "core/DocStore.hpp"
-#include "Job.hpp"
 #include <memory>
 #include <vector>
 
@@ -18,10 +17,6 @@ public:
         Scheduler(std::shared_ptr<hoss::core::DocStore> store);
 
         ~Scheduler();
-
-        std::vector<Job> getJobs();
-
-        Job getJob(const std::string &name);
 
         int run();
 
