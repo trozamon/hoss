@@ -49,19 +49,19 @@ High-level hoss
 Hoss is simple. A "job" or a "build" consist of the following:
 
 1. Source
-2. Build
+2. Build Instructions
 
 "Job" and "build" are used interchangeably throughout the documentation to mean
-the same thing. A workflow consists of multiple builds, probably with
+the same thing. A workflow consists of multiple jobs, probably with
 dependencies on each other.
 
 Jobs
 ----
 
-A job does one logical thing:
+A job operates on a single source to:
 
 * Compile, test, and package a set of code
-* Run an ansible playbook
+* Run one or more ansible playbooks
 * Build an RPM
 * Upload an artifact to a server via SFTP
 * Run some sort of arbitrary command
@@ -89,14 +89,13 @@ manually triggering builds. With that said, it is pretty useful to use the
 client binary in VCS post-commit hooks to inform hoss that there is a new
 commit.
 
-Hoss (specifically ``hoss-schedulerd``) does require other services to run:
+``hoss-schedulerd`` may use other services to run:
 
 * MongoDB
 
-Simple Deployment
+Simplest Deployment
 -----------------
 
-* 1 MongoDB
 * 1 hoss scheduler
 * 1 hoss builder
 
