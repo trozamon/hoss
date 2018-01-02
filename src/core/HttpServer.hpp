@@ -29,11 +29,11 @@ public:
 
         const std::vector<HttpRoute> & routes() const;
 
-        void start();
+        void run();
 
-private:
         class Impl;
 
+private:
         std::shared_ptr<Impl> impl;
 };
 

@@ -3,6 +3,7 @@
 #include <functional>
 #include <thread>
 
+using hoss::core::HttpServer;
 using hoss::core::InMemoryDocStore;
 using hoss::scheduler::Scheduler;
 using hoss::scheduler::Server;
@@ -17,6 +18,7 @@ Server::Server() :
 int Server::run()
 {
         thread sched{std::bind(&Scheduler::run, &scheduler)};
+        thread http1{std::bind(&HttpServer::run, &httpServer)};
 
         sched.join();
         return 0;
