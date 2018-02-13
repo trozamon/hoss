@@ -12,12 +12,23 @@ namespace core
 class HttpRequest
 {
 public:
+        enum Method
+        {
+                GET,
+                POST
+        };
+
         HttpRequest & path(const std::string &path);
 
         const std::string & path() const;
 
+        HttpRequest & method(const std::string &method);
+
+        Method method() const;
+
 private:
-        std::string p;
+        std::string _path;
+        Method _method;
 };
 
 } /* namespace core */

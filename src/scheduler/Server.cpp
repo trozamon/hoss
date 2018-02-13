@@ -11,7 +11,8 @@ using std::thread;
 
 Server::Server() :
         docStore{new InMemoryDocStore()},
-        scheduler{docStore}
+        scheduler{docStore},
+        httpApi1{httpServer, scheduler}
 {
 }
 

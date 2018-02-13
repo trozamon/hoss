@@ -62,3 +62,11 @@ BOOST_AUTO_TEST_CASE(copying)
 
         BOOST_CHECK(f.h.handled);
 }
+
+BOOST_AUTO_TEST_CASE(matching)
+{
+        F f;
+
+        BOOST_CHECK(f.r.matches("/accounts/1"));
+        BOOST_CHECK(!f.r.matches("/accounts/2"));
+}

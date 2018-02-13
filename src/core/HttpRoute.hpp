@@ -28,6 +28,10 @@ public:
 
         const std::string & path() const;
 
+        bool matches(const std::string &url) const;
+
+        bool matches(const char *url) const;
+
 private:
         handler_t _handler;
         std::string _path;

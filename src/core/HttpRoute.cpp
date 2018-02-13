@@ -25,3 +25,13 @@ HttpResponse HttpRoute::handle(const HttpRequest &req)
 {
         return _handler(req);
 }
+
+bool HttpRoute::matches(const std::string &url) const
+{
+        return _path == url;
+}
+
+bool HttpRoute::matches(const char *url) const
+{
+        return matches(string{url});
+}
