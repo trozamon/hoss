@@ -3,6 +3,11 @@
 using hoss::core::HttpResponse;
 using hoss::core::HttpStatus;
 
+HttpResponse::HttpResponse() :
+        _status{HttpStatus::NO_CONTENT}
+{
+}
+
 HttpResponse & HttpResponse::status(HttpStatus s)
 {
         _status = s;

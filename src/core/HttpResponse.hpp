@@ -12,12 +12,20 @@ namespace core
 enum class HttpStatus : unsigned int
 {
         OK = 200,
+        NO_CONTENT = 204,
         NOT_FOUND = 404
 };
 
+/**
+ * An HTTP response.
+ *
+ * Defaults to status 204 (success, no content).
+ */
 class HttpResponse
 {
 public:
+        HttpResponse();
+
         HttpResponse & status(HttpStatus s);
 
         HttpResponse & content(const std::string &raw);
