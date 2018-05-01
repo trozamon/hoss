@@ -37,4 +37,5 @@ target_link_libraries(hoss-core
         ${Boost_SYSTEM_LIBRARY}
         git2
         microhttpd
+        yaml
         )

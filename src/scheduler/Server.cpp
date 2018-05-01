@@ -3,6 +3,7 @@
 #include <functional>
 #include <thread>
 
+using hoss::core::Log;
 using hoss::core::HttpServer;
 using hoss::core::InMemoryDocStore;
 using hoss::scheduler::Scheduler;
@@ -12,7 +13,8 @@ using std::thread;
 Server::Server() :
         docStore{new InMemoryDocStore()},
         scheduler{docStore},
-        httpApi1{httpServer, scheduler}
+        httpApi1{httpServer, scheduler},
+        log{Log::getLogger("Server")}
 {
 }
 

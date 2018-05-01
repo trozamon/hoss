@@ -2,6 +2,8 @@
 #define HOSS_SCHEDULER_SCHEDULER_HPP
 
 #include "core/DocStore.hpp"
+#include "ScheduleRequest.hpp"
+#include "ScheduleResult.hpp"
 #include <memory>
 #include <vector>
 
@@ -17,6 +19,12 @@ public:
         Scheduler(std::shared_ptr<hoss::core::DocStore> store);
 
         ~Scheduler();
+
+        void addJobDefinition( /* TODO */ );
+
+        void addWorkflowDefinition( /* TODO */ );
+
+        ScheduleResult request(const ScheduleRequest &req);
 
         int run();
 

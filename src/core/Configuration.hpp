@@ -1,3 +1,4 @@
+#include <boost/property_tree/ptree.hpp>
 #include <fstream>
 #include <string>
 
@@ -16,7 +17,7 @@ public:
         /**
          * Load configuration from a file.
          */
-        static Configuration fromYaml(const std::ifstream &yaml);
+        static Configuration fromYaml(std::ifstream &yaml);
 
         /**
          * Load configuration from a YAML-formatted string.
@@ -26,7 +27,16 @@ public:
         /**
          * Get a string value from this configuration.
          */
-        std::string getString(const std::string &key);
+        template <typename T>
+        T get(const std::string &key)
+        {
+                return _values.get<T>(key);
+        }
+
+        std::vector<std::string> arr(const std::string &key);
+
+private:
+        boost::property_tree::ptree _values;
 };
 
 } /* namespace core */

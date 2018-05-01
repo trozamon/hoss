@@ -3,6 +3,7 @@
 
 #include "HttpApi1.hpp"
 #include "Scheduler.hpp"
+#include <core/Log.hpp>
 #include <core/HttpServer.hpp>
 #include <memory>
 
@@ -18,6 +19,8 @@ namespace scheduler
 class Server
 {
 public:
+        static Server fromConfiguration(const std::string &configFile);
+
         Server();
 
         int run();
@@ -27,6 +30,7 @@ private:
         hoss::scheduler::Scheduler scheduler;
         hoss::core::HttpServer httpServer;
         hoss::scheduler::HttpApi1 httpApi1;
+        hoss::core::Log log;
 };
 
 } /* namespace scheduler */
