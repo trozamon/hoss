@@ -3,6 +3,7 @@
 
 #include "HttpApi1.hpp"
 #include "Scheduler.hpp"
+#include "SchedulerConfiguration.hpp"
 #include <core/Log.hpp>
 #include <core/HttpServer.hpp>
 #include <memory>
@@ -19,13 +20,20 @@ namespace scheduler
 class Server
 {
 public:
-        static Server fromConfiguration(const std::string &configFile);
+        //static Server fromConfiguration(const std::string &configFile);
 
         Server();
+
+        Server(const SchedulerConfiguration &conf);
 
         int run();
 
 private:
+        void configure();
+
+        void loadJobDefs(const std::string &dir);
+
+        hoss::scheduler::SchedulerConfiguration _conf;
         std::shared_ptr<hoss::core::DocStore> docStore;
         hoss::scheduler::Scheduler scheduler;
         hoss::core::HttpServer httpServer;

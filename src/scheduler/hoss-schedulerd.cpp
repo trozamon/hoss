@@ -66,12 +66,7 @@ int main(int argc, char **argv)
         SchedulerConfiguration conf = load_configuration(
                         args["configuration"].as<string>());
 
-        for (auto dir : conf.defDirs())
-        {
-                logger.info() << "Loading defs from " << dir << linesep;
-        }
-
-        Server s;
+        Server s{conf};
 
         return s.run();
 }

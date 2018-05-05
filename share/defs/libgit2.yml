@@ -1,6 +1,7 @@
 job:
   name: libgit2
-  build: cmake
+  build:
+    type: cmake
 
   source:
     uri: https://github.com/libgit2/libgit2

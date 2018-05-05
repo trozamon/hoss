@@ -1,4 +1,4 @@
-#include "Configuration.hpp"
+#include "Yaml.hpp"
 #include <array>
 #include <boost/property_tree/ptree.hpp>
 #include <fstream>
@@ -9,14 +9,14 @@
 #include <yaml.h>
 
 using boost::property_tree::ptree;
-using hoss::core::Configuration;
+using hoss::core::Yaml;
 using std::array;
 using std::string;
 using std::vector;
 
 static void parse(ptree &tree, yaml_parser_t &parser);
 
-Configuration Configuration::fromYaml(std::ifstream &yaml)
+Yaml Yaml::fromYaml(std::ifstream &yaml)
 {
         array<char, 4096> buf;
         string content;
@@ -30,12 +30,12 @@ Configuration Configuration::fromYaml(std::ifstream &yaml)
         return fromYaml(content);
 }
 
-Configuration Configuration::fromYaml(const string &yaml)
+Yaml Yaml::fromYaml(const string &yaml)
 {
         yaml_parser_t parser;
         yaml_event_t event;
         ptree tree;
-        Configuration c;
+        Yaml c;
 
         yaml_parser_initialize(&parser);
 
@@ -91,7 +91,7 @@ static vector<string> split(const string &s, char delim)
         return parts;
 }
 
-vector<string> Configuration::arr(const string &key)
+vector<string> Yaml::arr(const string &key) const
 {
         vector<string> parts = split(key, '.');
         string last = parts[parts.size() - 1];

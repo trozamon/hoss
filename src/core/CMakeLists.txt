@@ -13,7 +13,6 @@ if (VCS_GIT)
 endif()
 
 add_library(hoss-core SHARED
-        Configuration.cpp
         Doc.cpp
         DocCollectionResult.cpp
         GitSource.cpp
@@ -26,6 +25,7 @@ add_library(hoss-core SHARED
         Log.cpp
         Message.cpp
         MessageProcessor.cpp
+        Yaml.cpp
         junk.cpp
         system_info.cpp
         )

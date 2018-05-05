@@ -41,6 +41,8 @@ public:
 
         int run();
 
+        void addJobDefinition(const JobDefinition &jd);
+
         void doAccept();
 
         void doReadHeader(Session session);
@@ -78,6 +80,11 @@ Scheduler::~Scheduler()
 int Scheduler::run()
 {
         return impl->run();
+}
+
+void Scheduler::addJobDefinition(const JobDefinition &jd)
+{
+        impl->addJobDefinition(jd);
 }
 
 Scheduler::Impl::Impl(shared_ptr<DocStore> store) :
@@ -239,4 +246,8 @@ void Scheduler::Impl::handleHeartbeat1(const Message &msg, const any &data)
 size_t KeyHash::operator()(const Session::Key &k) const
 {
         return k.hash();
+}
+
+void Scheduler::Impl::addJobDefinition(const JobDefinition &jd)
+{
 }

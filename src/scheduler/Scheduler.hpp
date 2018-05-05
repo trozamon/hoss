@@ -2,6 +2,7 @@
 #define HOSS_SCHEDULER_SCHEDULER_HPP
 
 #include "core/DocStore.hpp"
+#include "JobDefinition.hpp"
 #include "ScheduleRequest.hpp"
 #include "ScheduleResult.hpp"
 #include <memory>
@@ -20,9 +21,7 @@ public:
 
         ~Scheduler();
 
-        void addJobDefinition( /* TODO */ );
-
-        void addWorkflowDefinition( /* TODO */ );
+        void addJobDefinition(const JobDefinition &jd);
 
         ScheduleResult request(const ScheduleRequest &req);
 

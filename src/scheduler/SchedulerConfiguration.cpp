@@ -1,6 +1,6 @@
 #include "SchedulerConfiguration.hpp"
 
-using hoss::core::Configuration;
+using hoss::core::Yaml;
 using hoss::scheduler::SchedulerConfiguration;
 using std::ifstream;
 using std::string;
@@ -12,16 +12,16 @@ SchedulerConfiguration::SchedulerConfiguration()
 
 SchedulerConfiguration SchedulerConfiguration::fromYaml(ifstream &yaml)
 {
-        return SchedulerConfiguration(Configuration::fromYaml(yaml));
+        return SchedulerConfiguration(Yaml::fromYaml(yaml));
 }
 
 SchedulerConfiguration SchedulerConfiguration::fromYaml(
                 const string &yaml)
 {
-        return SchedulerConfiguration(Configuration::fromYaml(yaml));
+        return SchedulerConfiguration(Yaml::fromYaml(yaml));
 }
 
-SchedulerConfiguration::SchedulerConfiguration(const Configuration &conf) :
+SchedulerConfiguration::SchedulerConfiguration(const Yaml &conf) :
         _conf{conf}
 {
 }
