@@ -1,7 +1,7 @@
 #ifndef HOSS_CORE_MESSAGE_HPP
 #define HOSS_CORE_MESSAGE_HPP
 
-#include "msg1/Heartbeat.pb.h"
+#include "msg1.hpp"
 #include <sstream>
 
 namespace hoss
@@ -16,7 +16,9 @@ namespace core
 enum class MessageType : unsigned char
 {
         Unknown = 0,
-        Heartbeat1 = 1
+        Heartbeat1 = 1,
+        ScheduleRequest1 = 2,
+        ScheduleResult1 = 3
 };
 
 /**
@@ -59,6 +61,20 @@ public:
          * @param hb a heartbeat
          */
         Message(const hoss::msg1::Heartbeat &hb);
+
+        /**
+         * Create a message out of a schedule request.
+         *
+         * @param req a request
+         */
+        Message(const hoss::msg1::ScheduleRequest &req);
+
+        /**
+         * Create a message out of a schedule result.
+         *
+         * @param res a result
+         */
+        Message(const hoss::msg1::ScheduleResult &res);
 
         /**
          * Get the raw message ready for shipping across the interwebz.

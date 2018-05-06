@@ -8,25 +8,25 @@ using std::out_of_range;
 using std::string;
 using std::vector;
 
-void MessageProcessor::process(const string &raw, const any &data)
+void MessageProcessor::process(const string &raw, any &data)
 {
         Message msg{raw};
         process(msg, data);
 }
 
 void MessageProcessor::handle(MessageType type,
-                const function<void(const Message &, const any &)> &handler)
+                const function<void(const Message &, any &)> &handler)
 {
         cb[type] = handler;
 }
 
-void MessageProcessor::process(const vector<char> &raw, const any &data)
+void MessageProcessor::process(const vector<char> &raw, any &data)
 {
         string tmp{raw.data(), raw.size()};
         process(tmp, data);
 }
 
-void MessageProcessor::process(const Message &msg, const any &data)
+void MessageProcessor::process(const Message &msg, any &data)
 {
         if (cb.count(msg.type()) == 0)
         {

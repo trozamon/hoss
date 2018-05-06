@@ -1,0 +1,16 @@
+syntax = "proto2";
+
+package hoss.msg1;
+
+message ScheduleResult {
+
+  enum Status {
+    DENIED = 1;
+    QUEUED = 2;
+  }
+
+  optional string id = 1;
+
+  optional Status status = 2;
+
+}

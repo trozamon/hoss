@@ -3,8 +3,6 @@
 
 #include "core/DocStore.hpp"
 #include "JobDefinition.hpp"
-#include "ScheduleRequest.hpp"
-#include "ScheduleResult.hpp"
 #include <memory>
 #include <vector>
 
@@ -22,8 +20,6 @@ public:
         ~Scheduler();
 
         void addJobDefinition(const JobDefinition &jd);
-
-        ScheduleResult request(const ScheduleRequest &req);
 
         int run();
 

@@ -1,15 +1,25 @@
 #include "Scheduler.hpp"
 #include "Session.hpp"
-#include "core/Log.hpp"
-#include "core/MessageProcessor.hpp"
-#include "msg1/Heartbeat.pb.h"
+#include "core.hpp"
+#include "msg1.hpp"
 #include <boost/any.hpp>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <memory>
 #include <unordered_map>
 
+#define HANDLER(msg_type) void handle ## msg_type(const Message &msg, \
+                any &data);
+
+#define HANDLE(msg_type) do { \
+        handle(MessageType::msg_type, \
+                        std::bind(&Scheduler::Impl::handle ## msg_type, \
+                                this, std::placeholders::_1, \
+                                std::placeholders::_2)); \
+} while (0)
+
 namespace error = boost::asio::error;
+namespace msg1 = hoss::msg1;
 
 using boost::any;
 using boost::any_cast;
@@ -20,8 +30,8 @@ using hoss::core::DocStore;
 using hoss::core::Log;
 using hoss::core::Message;
 using hoss::core::MessageType;
+using hoss::core::Uuid;
 using hoss::core::linesep;
-using hoss::msg1::Heartbeat;
 using hoss::scheduler::Scheduler;
 using hoss::scheduler::Session;
 using std::shared_ptr;
@@ -49,15 +59,22 @@ public:
 
         void doReadBody(Session session, size_t len);
 
-        void handleAccept(error_code error);
+        void doSend(any &session, const Message &msg);
 
-        void handleHeartbeat1(const Message &msg, const any &data);
+        void doSend(Session session, const Message &msg);
+
+        void handleAccept(error_code error);
 
         void handleReadHeader(Session session, error_code error, size_t read);
 
         void handleReadBody(Session session, error_code error, size_t read);
 
+        void handleSend(Session session, error_code error, size_t sent);
+
         void setupProcessing();
+
+        HANDLER(Heartbeat1);
+        HANDLER(ScheduleRequest1);
 
 private:
         io_service svc;
@@ -99,9 +116,8 @@ Scheduler::Impl::Impl(shared_ptr<DocStore> store) :
 
 void Scheduler::Impl::setupProcessing()
 {
-        handle(MessageType::Heartbeat1,
-                        std::bind(&Scheduler::Impl::handleHeartbeat1, this,
-                                std::placeholders::_1, std::placeholders::_2));
+        HANDLE(Heartbeat1);
+        HANDLE(ScheduleRequest1);
 }
 
 int Scheduler::Impl::run()
@@ -175,7 +191,7 @@ void Scheduler::Impl::handleReadHeader(Session session, error_code error,
         {
                 if (error == error::eof)
                 {
-                        log.info() << "Client disconnected" << linesep;
+                        log.info("Client disconnected");
                 }
                 else
                 {
@@ -228,9 +244,9 @@ void Scheduler::Impl::handleReadBody(Session session, error_code error,
         doReadHeader(session);
 }
 
-void Scheduler::Impl::handleHeartbeat1(const Message &msg, const any &data)
+void Scheduler::Impl::handleHeartbeat1(const Message &msg, any &data)
 {
-        Heartbeat hb = msg.message<Heartbeat>();
+        msg1::Heartbeat hb = msg.message<msg1::Heartbeat>();
         Session::Key k{hb.name(), 0};
 
         if (sessions.count(k) == 0)
@@ -243,6 +259,21 @@ void Scheduler::Impl::handleHeartbeat1(const Message &msg, const any &data)
         }
 }
 
+void Scheduler::Impl::handleScheduleRequest1(const Message &msg, any &data)
+{
+        msg1::ScheduleRequest req = msg.message<msg1::ScheduleRequest>();
+        msg1::ScheduleResult res;
+        Uuid uuid;
+
+        res.set_id(uuid.pretty());
+        res.set_status(msg1::ScheduleResult::QUEUED);
+
+        log.info() << "Scheduled " << req.id() <<
+                " as " << res.id() << linesep;
+
+        doSend(data, Message(res));
+}
+
 size_t KeyHash::operator()(const Session::Key &k) const
 {
         return k.hash();
@@ -250,4 +281,70 @@ size_t KeyHash::operator()(const Session::Key &k) const
 
 void Scheduler::Impl::addJobDefinition(const JobDefinition &jd)
 {
+}
+
+void Scheduler::Impl::doSend(any &session, const Message &msg)
+{
+        Session s = any_cast<Session>(session);
+
+        doSend(s, msg);
+}
+
+void Scheduler::Impl::doSend(Session session, const Message &msg)
+{
+        size_t front = session.sbuf().size();
+
+        session.sbuf().resize(front + msg.length());
+        memcpy(session.sbuf().data() + front,
+                        msg.buffer().c_str(),
+                        msg.length());
+
+        if (!session.wip())
+        {
+                auto cb = boost::bind(&Scheduler::Impl::handleSend,
+                                this,
+                                session,
+                                boost::asio::placeholders::error,
+                                boost::asio::placeholders::bytes_transferred
+                                );
+
+                session.wip(true);
+                session.socket().async_write_some(
+                                boost::asio::buffer(session.sbuf()),
+                                cb);
+        }
+}
+
+void Scheduler::Impl::handleSend(Session session, error_code error,
+                size_t sent)
+{
+        if (error)
+        {
+                log.warning() << "Could not send - " <<
+                        error.value() << " with message " <<
+                        error.message() << linesep;
+                session.wip(false);
+                return;
+        }
+
+        session.sbuf().erase(session.sbuf().begin(),
+                        session.sbuf().begin() + sent);
+
+        if (session.sbuf().size() == 0)
+        {
+                session.wip(false);
+        }
+        else
+        {
+                auto cb = boost::bind(&Scheduler::Impl::handleSend,
+                                this,
+                                session,
+                                boost::asio::placeholders::error,
+                                boost::asio::placeholders::bytes_transferred
+                                );
+
+                session.socket().async_write_some(
+                                boost::asio::buffer(session.sbuf()),
+                                cb);
+        }
 }

@@ -5,8 +5,6 @@ add_library(hoss-scheduler STATIC
         HttpApi1.cpp
         JobDefinition.cpp
         Parser.cpp
-        ScheduleRequest.cpp
-        ScheduleResult.cpp
         Scheduler.cpp
         SchedulerConfiguration.cpp
         Server.cpp

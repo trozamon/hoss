@@ -28,6 +28,16 @@ Message::Message(const Heartbeat &hb)
         pack(MessageType::Heartbeat1, hb.SerializeAsString());
 }
 
+Message::Message(const hoss::msg1::ScheduleRequest &req)
+{
+        pack(MessageType::ScheduleRequest1, req.SerializeAsString());
+}
+
+Message::Message(const hoss::msg1::ScheduleResult &res)
+{
+        pack(MessageType::ScheduleResult1, res.SerializeAsString());
+}
+
 void Message::pack(MessageType type, const string & data)
 {
         uint16_t s = htons(static_cast<uint16_t>(data.size() + HEADER_SIZE));

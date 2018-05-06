@@ -49,6 +49,18 @@ public:
 
         std::vector<char> & buffer();
 
+        std::vector<char> & sbuf();
+
+        /**
+         * Set whether or not a write is in progress.
+         */
+        void wip(bool inProgress);
+
+        /**
+         * Is a write in progress?
+         */
+        bool wip() const;
+
         Key key() const;
 
 private:

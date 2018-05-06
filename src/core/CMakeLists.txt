@@ -12,6 +12,10 @@ if (VCS_GIT)
     add_definitions(-DHOSS_ENABLE_VCS_GIT)
 endif()
 
+include_directories(
+        /usr/include/uuid
+        )
+
 add_library(hoss-core SHARED
         Doc.cpp
         DocCollectionResult.cpp
@@ -25,6 +29,7 @@ add_library(hoss-core SHARED
         Log.cpp
         Message.cpp
         MessageProcessor.cpp
+        Uuid.cpp
         Yaml.cpp
         junk.cpp
         system_info.cpp
@@ -37,5 +42,6 @@ target_link_libraries(hoss-core
         ${Boost_SYSTEM_LIBRARY}
         git2
         microhttpd
+        uuid
         yaml
         )

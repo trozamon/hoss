@@ -28,7 +28,7 @@ public:
                 data.push_back(d);
         }
 
-        void proc(const string &raw, const any &data)
+        void proc(const string &raw, any &data)
         {
                 process(raw, data);
         }
